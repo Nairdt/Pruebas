@@ -1,0 +1,69 @@
+*{
+    box-sizing: border-box;
+    text-align: center;
+}
+
+body {
+    background-color: #cbc5c5;
+}
+#customers {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#customers td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#customers tr:nth-child(even){background-color: #f2f2f2;}
+
+#customers tr:hover {background-color: #ddd;}
+
+#customers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #04AA6D;
+    color: white;
+}
+
+.mainRegistroLogin {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    padding-top:60px;
+}
+
+.p-b-20 {
+    padding-botton: 20px;
+}
+@media (min-width: 768px ) {
+    .divCajaRegistro {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: black;
+        color: white;
+        margin-top: 5em;
+    }
+}
+@media (max-width: 768px ) {
+    .divCajaRegistro {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: black;
+        color: white;
+    }
+}
+#signup input,select {
+    display: inline;
+}

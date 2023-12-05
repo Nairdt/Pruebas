@@ -1,0 +1,144 @@
+{{#partial "contenido"}}
+    <main style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center;">
+        <h1>EDITAR ENTIDAD</h1>
+        <label for="inputIncidente" class="form-label">{{Entidad.nombre}}</label>
+        <input type="text" class="form-control" id="inputNombreEntidad" style="width: 50%; align-self: center;">
+
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+          style="width: 50%; margin-top: 3rem; align-self: center;">Nuevo establecimiento</button>
+          <a href="/entidades/">
+            <button type="button" class="btn btn-dark"
+            style="width: 50%; margin-top: 3rem; align-self: center;">Volver</button>
+          </a>
+          <h2 style="margin-top: 2rem;">ESTABLECIMIENTOS</h2>
+          <table id="customers" style="margin-bottom: 5rem; width: 80%; align-self: center;">
+            <tr>
+                <th>Nombre</th>
+                <th>Localizacion</th>
+                <th>Servicios</th>
+                <th>Acciones</th>
+            </tr>
+              {{#each Entidad.establecimientos}}
+                  <tr>
+                      <td>{{this.nombre}}</td>
+                      <td>{{this.localizacion}}</td>
+                      <td>
+                          <ul>
+                              {{#each this.serviciosDisponibles}}
+                                  <li>{{this.nombre}}</li>
+                              {{/each}}
+                          </ul>
+                      </td>
+                      <td>
+                          <a href="/establecimientos/{{this.id_establecimiento}}"><button class="btn btn-warning">Editar establecimiento</button></a>
+                          <form method="GET" action="/michis/">
+                                <button type="submit" class="btn btn-warning">Eliminar establecimiento</button>
+                          </form>
+                      </td>
+                  </tr>
+              {{/each}}
+        </table>
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="/entidades/{{Entidad.id_entidad}}/establecimientos/nuevoEstablecimiento">
+                <div class="modal-header" style="background-color: black; color: white;">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Nuevo establecimiento</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
+                </div>
+                <div class="modal-body" style="background-color: cyan;">
+                        <div class="mb-3">
+                            <h2 style="border-bottom: 4px solid black;">Datos principales</h2>
+                            <label for="inputNombreEstablecimiento" class="form-label">NOMBRE</label>
+                            <input name="nombre" type="text" class="form-control" id="inputNombreEstablecimiento">
+                            <h2 style="border-bottom: 4px solid black; margin-top: 1rem;">Localización</h2>
+                            <select name="provincia" class="form-select" aria-label="Default select example" id="1">
+                                <option>Provincia</option>
+                                {{#each provincias}}
+                                    <option value="{{this.nombre}}">{{this.nombre}}</option>
+                                {{/each}}
+                            </select>
+                            <br>
+                            <select name="municipio" class="form-select" aria-label="Default select example" id="1">
+                                <option>Municipio</option>
+                                <option id="m1" value="M1">M1</option>
+                                <option id="m2" value="M2">M2</option>
+                                <option id="m3" value="M3">M3</option>
+                            </select>
+                            <br>
+                            <select name="localidad" class="form-select" aria-label="Default select example" id="1">
+                                <option>Localidad</option>
+                                <option id="l1" value="Lugano">Lugano</option>
+                                <option id="l2" value="La Boca">La Boca</option>
+                                <option id="l3" value="Belgrano">Belgrano</option>
+                            </select>
+                            <br>
+                            <select name="departamento" class="form-select" aria-label="Default select example" id="1">
+                                <option>Departamento</option>
+                                <option id="d1" value="D1">D1</option>
+                                <option id="d2" value="D2">D2</option>
+                                <option id="d3" value="D3">D3</option>
+                            </select>
+                        </div>
+                </div>
+                <div class="modal-footer" style="background-color: black;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Volver</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    </main>
+
+    <footer></footer>
+    <script>
+        let cantServicios = 1;
+        const opcionesElegidas = [];
+        document.getElementById("btnOtroServicio").addEventListener("click", otroServicio);
+
+        function otroServicio(e){
+            e.preventDefault();
+            const select = document.getElementById(`select${cantServicios}`).value;
+            opcionesElegidas.push(select)
+            cantServicios++;
+            const serviciosHTML = document.getElementById("servicios").innerHTML
+            let html = ``;
+            for(let i = 1; i <= cantServicios; i++){
+                let nombreServicio = "";
+                let problematica = "";
+                if(i<cantServicios){
+                    nombreServicio = document.getElementById(`inputNombreServicio${i}`).value;
+                    problematica = document.getElementById(`inputProblemServicio${i}`).value;
+                }
+
+                html += `
+                <div id="servicio${cantServicios}" style="border-top: 2px solid black; margin-top: 1rem;">
+                    <h4>Servicio ${i}</h4>
+                                <label for="inputIncidente" class="form-label">Nombre</label>
+                                <input name="nombre_servicio_${i}" value="${nombreServicio || ""}" type="text" class="form-control" id="inputNombreServicio${i}">
+                                <label for="inputIncidente" class="form-label">Tipo</label>
+                                <select name="tipo_servicio_${i}" class="form-select" aria-label="Default select example" id="select${i}">
+                                    <option>Elegir tipo</option>
+                                    <option ${elegida(opcionesElegidas, i-1, "Baño")} id="${cantServicios}.1" value="Baño">Baño</option>
+                                    <option ${elegida(opcionesElegidas, i-1, "Parada")} id="${cantServicios}.2" value="Parada">Parada</option>
+                                    <option ${elegida(opcionesElegidas, i-1, "Ascensor")} id="${cantServicios}.3" value="Ascensor">Ascensor</option>
+                                </select>
+                                <label for="inputIncidente" class="form-label">Problematica</label>
+                                <input name="problematica_servicio_${i}" value="${problematica || ""}" type="text" class="form-control" id="inputProblemServicio${i}">
+                    </div>
+
+                `
+            }
+            document.getElementById("servicios").innerHTML = html;
+        }
+
+        function elegida(opcionesElegidas, posicion, opcion){
+            if(opcionesElegidas[posicion] == opcion) return "selected"
+        }
+    </script>
+{{/partial}}
+{{>templates/layoutBase rolUsuario=RolUsuario}}

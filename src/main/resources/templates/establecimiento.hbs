@@ -1,0 +1,148 @@
+{{#partial "contenido"}}
+<main style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center; align-items: center;">
+    <h1>Editar establecimiento</h1>
+    <form style="width: 77%;" method="POST" action="/establecimientos/{{Establecimiento.id_establecimiento}}">
+        <div class="mb-3">
+            <h2 style="border-bottom: 4px solid black; margin-top: 1rem;">Nombre</h2>
+            <input name="nombre" type="text" class="form-control" id="exampleInputName2" value="{{Establecimiento.nombre}}">
+        </div>
+        <h2 style="border-bottom: 4px solid black; margin-top: 1rem;">Localización</h2>
+        <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+            <select class="form-select" aria-label="Default select example" id="1">
+                <option>Provincia</option>
+                <option id="p1" value="Buenos Aires">Buenos Aires</option>
+                <option id="p2" value="CABA">CABA</option>
+            </select>
+            <br>
+            <select class="form-select" aria-label="Default select example" id="2">
+                <option>Municipio</option>
+                <option id="m1" value="M1">M1</option>
+                <option id="m2" value="M2">M2</option>
+                <option id="m3" value="M3">M3</option>
+            </select>
+            <br>
+            <select class="form-select" aria-label="Default select example" id="3">
+                <option>Localidad</option>
+                <option id="l1" value="Lugano">Lugano</option>
+                <option id="l2" value="La Boca">La Boca</option>
+                <option id="l3" value="Belgrano">Belgrano</option>
+            </select>
+            <br>
+            <select class="form-select" aria-label="Default select example" id="4">
+                <option>Departamento</option>
+                <option id="d1" value="D1">D1</option>
+                <option id="d2" value="D2">D2</option>
+                <option id="d3" value="D3">D3</option>
+            </select>
+        </div>
+    </form>
+        <h2 style="border-bottom: 4px solid black; margin-top: 1rem;">Servicios</h2>
+        <table id="customers" style="margin-bottom: 5rem; align-self: center; justify-self: center;">
+            <tr>
+                <th>Nombre en establecimiento</th>
+                <th>Nombre generico</th>
+                <th>Tipo</th>
+                <th>Acciones</th>
+            </tr>
+            {{#each Establecimiento.serviciosDisponibles}}
+                <tr>
+                    <td>{{this.nombre}}</td>
+                    <td>{{this.servicio.nombre}}</td>
+                    <td>{{this.servicio.tipoServicio.nombre}}</td>
+                    <td>
+                        <a href="/servicios/{{this.servicio.id_servicio}}">
+                            <button class="btn btn-warning">
+                                Editar
+                            </button>
+                        </a>
+                        <button class="btn btn-danger deshabilitarServicio" style="{{#unless this.habilitado}}display:none;{{/unless}}" data-id-servicio="{{this.id_servicio_por_establecimiento}}">
+                            Deshabilitar
+                        </button>
+                        <button class="btn btn-success habilitarServicio" style="{{#if this.habilitado}}display:none;{{/if}}" data-id-servicio="{{this.id_servicio_por_establecimiento}}">
+                            Habilitar
+                        </button>
+                    </td>
+                </tr>
+            {{/each}}
+        </table>
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Nuevo Servicio
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="/establecimiento/{{Establecimiento.id_establecimiento}}/servicio/nuevo">
+                    <div class="modal-header" style="background-color: black; color: white;">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo servicio</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
+                    </div>
+                    <div class="modal-body" style="background-color: cyan;">
+                        <label for="inputNombreServicio" class="form-label">Nombre</label>
+                        <input name="nombre_servicio" type="text" class="form-control" id="inputNombreServicio">
+                        <label for="select1" class="form-label">Tipo</label>
+                        <select name="tipo_servicio" class="form-select" aria-label="Default select example" id="select1">
+                            <option>Elegir tipo</option>
+                            <option id="1.1" value="Baño">Baño</option>
+                            <option id="1.2" value="Parada">Parada</option>
+                            <option id="1.3" value="Ascensor">Ascensor</option>
+                        </select>
+                        <label for="inputProblemServicio1" class="form-label">Problematica</label>
+                        <input name="problematica_servicio" value="" type="text" class="form-control" id="inputProblemServicio1">
+                    </div>
+                    <div class="modal-footer" style="background-color: black;">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Crear servicio</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <button id="guardarEstablecimiento" class="btn btn-primary">Guardar establecimiento</button>
+    <a href="/entidades/{{Establecimiento.entidad.id_entidad}}">
+            <button type="button" class="btn btn-dark">Volver</button>
+    </a>
+</main>
+<footer></footer>
+<script>
+    $(document).ready(() => {
+
+        $('#guardarEstablecimiento').on('click', function () {
+            $('form').submit();
+        });
+
+
+        $(document).on('click', '.deshabilitarServicio, .habilitarServicio', function (e) {
+            var idServicio = $(e.target).attr("data-id-servicio");
+            procesarCambioEstado(idServicio);
+        });
+
+    });
+    var idServicio = 0;
+    function procesarCambioEstado(idServicioParam) {
+        idServicio = idServicioParam;
+        $.ajax({
+            url: "/servicios/cambiarEstadoServicio/" + idServicio,
+            type: "POST",
+            success: function (data) {
+                if (data.length > 0) {
+                    if (data == "false") {
+                        //Buscar boton segun idServicio y clase
+                        //Deshabilitado
+                        $('.deshabilitarServicio[data-id-servicio="' + idServicio + '"]').hide();
+                        $('.habilitarServicio[data-id-servicio="' + idServicio + '"]').show();
+                    } else {
+                        //Buscar boton segun idServicio y clase
+                        $('.habilitarServicio[data-id-servicio="' + idServicio + '"]').hide();
+                        $('.deshabilitarServicio[data-id-servicio="' + idServicio + '"]').show();
+                    }
+                }
+            }
+        });
+    }
+</script>
+{{/partial}}
+{{>templates/layoutBase rolUsuario=RolUsuario}}

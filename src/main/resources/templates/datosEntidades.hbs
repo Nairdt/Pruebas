@@ -1,0 +1,45 @@
+{{#partial "contenido"}}
+    <main style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center;">
+        <h1>DATOS ENTIDADES</h1>
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+            {{#each entidades as |entidad|}}
+                <div class="accordion-item{{@index}}">
+                    <h2 class="accordion-header{{@index}}">
+                        <button class="accordion-button collapsed" style="background-color: cornsilk;" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse{{@index}}" aria-expanded="false" aria-controls="panelsStayOpen-collapse{{@index}}">
+                            {{entidad.nombre}}
+                        </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapse{{@index}}" class="accordion-collapse collapse">
+                            <div class="accordion-body" style="display: flex; flex-direction: column; justify-content: center;">
+                                <h4>Establecimientos</h4>
+                                <table id="customers" style="margin-bottom: 5rem; width: 80%; align-self: center;">
+                                    <tr>
+                                        <th>Establecimiento</th>
+                                        <th>Localizacion</th>
+                                        <th>Servicios</th>
+                                    </tr>
+                                {{#each entidad.establecimientos as |establecimiento|}}
+                                    <tr>
+                                        <td>{{establecimiento.nombre}}</td>
+                                        <td>{{establecimiento.localizacion.departamento.nombre}}</td>
+                                        <td>
+                                            <ul>
+                                                {{#each establecimiento.serviciosDisponibles as |servicioPorEstablecimiento|}}
+                                                        <li>{{servicioPorEstablecimiento.nombre}}</li>
+                                                {{/each}}
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                {{/each}}
+                                </table>
+                                <a href="/entidades/{{entidad.id_entidad}}">
+                                    <button type="button" class="btn btn-warning" style="width: 50%; margin-top: 3rem; align-self: center;">Editar entidad</button>
+                                </a>
+                            </div>
+                    </div>
+                </div>
+            {{/each}}
+            </div>
+    </main>
+{{/partial}}
+{{>templates/layoutBase rolUsuario=RolUsuario}}

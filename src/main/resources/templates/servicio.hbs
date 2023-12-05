@@ -1,0 +1,56 @@
+{{#partial "contenido"}}
+<main
+        style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center; align-items: center;">
+    <h1>Editar servicio</h1>
+    <form style="width: 30%;" method="POST" action="/servicios/editarServicio/{{Servicio.id_servicio_por_establecimiento}}">
+        <div class="mb-3">
+            <label for="exampleInputName2" class="form-label">Nombre</label>
+            <input name="nombre" type="text" class="form-control" id="exampleInputName2" value="{{Servicio.nombre}}">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputName2" class="form-label">Tipo servicio</label>
+            <select name="tipoServicio" id="selectTipoServicio" class="form-select" aria-label="Default select example">
+                <option value = "-1" selected>Tipo</option>
+                {{#each tiposServicio}}
+                    <option value="{{this.id_tipo_servicio}}">{{this.nombre}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </form>
+    <div style="display:flex;justify-content: center;">
+        <div class="col-md-12">
+            <button id="guardarCambios" class="btn btn-primary">Confirmar cambios</button>
+        </div>
+        <div class="col-md-12">
+            <a href="/establecimientos/{{Servicio.establecimiento.id_establecimiento}}"><button class="btn btn-dark">Volver</button></a>
+        </div>
+    </div>
+</main>
+
+<footer></footer>
+<script>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+        crossorigin="anonymous"></script>
+<script
+        src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+        crossorigin="anonymous">
+</script>
+
+<script>
+    $(document).ready(function() {
+        $("#guardarCambios").on('click', () => {
+            $('form').submit();
+        })
+        $('form').on('submit',function(e) {
+           if($('#selectTipoServicio').val() < 0) {
+               alert("Elegi un tipo de servicio valido");
+               e.preventDefault();
+           }
+        });
+    })
+</script>
+{{/partial}}
+{{>templates/layoutBase rolUsuario=RolUsuario}}

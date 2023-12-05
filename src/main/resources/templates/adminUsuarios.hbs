@@ -1,0 +1,32 @@
+{{#partial "contenido"}}
+<main style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center; align-items: center;">
+    <h1>ADMINISTRACION DE USUARIOS</h1>
+<table id="customers" style="margin-bottom: 5rem; width: 80%; align-self: center; margin-top: 3rem;">
+    <tr>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th></th>
+    </tr>
+
+    {{#each usuarios}}
+        <tr>
+            <td>{{this.nombre}}</td>
+            <td>{{this.mail}}</td>
+            <td>{{this.rol.nombre}}</td>
+            <td>
+                <a class="btn btn-primary" href="/usuarios/{{this.id_usuario}}">Editar</a>
+            </td>
+        </tr>
+    {{/each}}
+    </table>
+    </main>
+
+    <footer></footer>
+    <script>
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+            crossorigin="anonymous"></script>
+{{/partial}}
+{{>templates/layoutBase rolUsuario=RolUsuario}}
