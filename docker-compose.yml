@@ -5,11 +5,13 @@ services:
     environment:
       POSTGRES_PASSWORD: root
       POSTGRES_DB: dds2023
+    ports:
+      - "5432:5432"
     volumes:
       - ./posgresdb:/var/lib/postgresql/data
 
   app:
-    image: ddsdeploy
+    image: sha256:f6e17f86e1e8ddffe51d5ffaf7462b955a4a81f52e5de62bd987d2e36ae70e41
     restart: always
     ports:
       - 8080:8080
