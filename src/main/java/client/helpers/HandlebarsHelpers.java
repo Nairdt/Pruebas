@@ -8,16 +8,24 @@ public class HandlebarsHelpers {
     public static Helper<Object> esAdministradorHandlebars = ((context, options) -> {
         if(context != null) {
             if(context.toString().contains("ADMINISTRADOR"))
-                return options.fn(options);
+                return true;
         }
-        return options.inverse(options);
+        return false;
     });
 
     public static Helper<Object> esPrestadorHandlebars = ((context, options) -> {
         if(context != null) {
             if(context.toString().contains("PRESTADOR"))
-                return options.fn(options);
+                return true;
         }
-        return options.inverse(options);
+        return false;
+    });
+
+    public static Helper<Object> esMiembroHandlebars = ((context, options) -> {
+        if(context != null) {
+            if(context.toString().contains("MIEMBRO"))
+                return true;
+        }
+        return false;
     });
 }

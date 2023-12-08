@@ -11,7 +11,13 @@ import java.util.Arrays;
 import java.util.Set;
 
 public class MiddlewareAutenticacion {
-    private static final String[] urlsSinLogin = {"/login","/","/signup","/validarPassword","/logout"};
+    private static final String[] urlsSinLogin = {
+            "/login",
+            "/",
+            "/signup",
+            "/validarPassword",
+            "/logout"
+    };
     public static void apply(JavalinConfig config) {
             config.accessManager(((handler, context, routeRoles) -> {
 
@@ -33,7 +39,7 @@ public class MiddlewareAutenticacion {
 
     private static boolean existeOPoseePermiso(Set<? extends RouteRole> routeRoles, Context context) {
         RolUsuario rolUsuario = getRolUsuario(context);
-        return routeRoles.size() == 0 || (rolUsuario != null && routeRoles.contains(rolUsuario));
+        return routeRoles.isEmpty() || (rolUsuario != null && routeRoles.contains(rolUsuario));
     }
 
     private static Integer getIdUsuario(Context context) {
@@ -47,18 +53,16 @@ public class MiddlewareAutenticacion {
                 null;
     }
 
-    private static boolean existeSesion(Context context) {
-        return getIdUsuario(context) != null && getRolUsuario(context) != null;
+    private static String getNombreUsuario(Context context) {
+        return context.req().getSession().getAttribute("nombre") != null ?
+                (String) context.req().getSession().getAttribute("nombre") :
+                null;
     }
 
-//    private static boolean poseePermiso(Context context) {
-//        Long idUsuario = (Long) context.req().getSession().getAttribute("idUsuario");
-//        Usuario usuario = (Usuario) new RepositorioDeUsuarios().buscar(idUsuario);
-//
-////        usuario.getRol().poseeFuncionalidad();
-//
-//        return true;
-//    }
+    private static boolean existeSesion(Context context) {
+        return getIdUsuario(context) != null && getRolUsuario(context) != null && getNombreUsuario(context) != null;
+    }
+
     private static boolean esUrlsSinLogin(String url) {
         return Arrays.stream(urlsSinLogin).anyMatch(x->x.contentEquals(url));
     }

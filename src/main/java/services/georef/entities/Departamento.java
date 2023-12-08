@@ -1,12 +1,14 @@
 package services.georef.entities;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 
 @Embeddable
 @Getter
+@Setter
 public class Departamento{
 
     @Column(name = "id_departamento")

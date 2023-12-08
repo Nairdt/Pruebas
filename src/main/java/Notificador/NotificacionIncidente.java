@@ -39,7 +39,6 @@ public class NotificacionIncidente {
 
         String informe = "";
         informe += "NOMBRE AUTOR: " + autor.getNombre() + "\n" +
-                    "TELEFONO: " + autor.getTelefono() + "\n" +
                     "SERVICIO: " + servicio + "\n" +
                     "TIPO SERVICIO: " + tipo + "\n" +
                     "FECHA: " + this.fechaHora.getFecha() + "\n" +

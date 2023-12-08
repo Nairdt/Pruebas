@@ -1,18 +1,17 @@
 package client.server;
-import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-
 public class App {
     public static EntityManagerFactory emf;
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception{
+        Server.init();
         Map<String, String> env = System.getenv();
 
-        emf =  createEntityManagerFactory();
+       // emf =  createEntityManagerFactory();
 
         Server.init();
     }
@@ -29,8 +28,8 @@ public class App {
                 "hibernate__connection__username",
                 "hibernate__hbm2ddl__auto",
                 "hibernate__connection__url"};
-                //"hibernate__connection__pool_size",
-                //"hibernate__show_sql" };
+        //"hibernate__connection__pool_size",
+        //"hibernate__show_sql" };
 
         for (String key : keys) {
 

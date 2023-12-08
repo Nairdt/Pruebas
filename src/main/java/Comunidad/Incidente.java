@@ -1,6 +1,7 @@
 package Comunidad;
 
 import Notificador.FechaHora;
+import Organizaciones.Entidad;
 import Servicios.Servicio;
 import Servicios.ServicioCompuesto;
 import Servicios.ServicioPorEstablecimiento;
@@ -43,13 +44,22 @@ public class Incidente {
     @OneToOne
     @JoinColumn(name = "id_fecha_hora_inicio", referencedColumnName = "id_fecha_hora")
     private FechaHora fechaHora;
+    @Column(name = "reportador")
+    private String usuarioQueReporto;
+    @Column(name = "clausurador")
+    private String usuarioQueCerro;
 
-    public Incidente(Comunidad comunidad, String observaciones, ServicioPorEstablecimiento servicioBase, ServicioCompuesto servicioCompuesto, FechaHora fechaHora, Boolean resuelto) {
+    @ManyToOne
+    @JoinColumn(name = "id_entidad", referencedColumnName = "id_entidad")
+    private Entidad entidad;
+
+    public Incidente(Comunidad comunidad, String observaciones, ServicioPorEstablecimiento servicioBase, String usuarioQueReporto, FechaHora fechaHora, Boolean resuelto) {
         this.comunidad = comunidad;
         this.observaciones = observaciones;
         this.servicioBase = servicioBase;
         this.fechaHora = fechaHora;
         this.resuelto = resuelto;
+        this.usuarioQueReporto = usuarioQueReporto;
     }
 
     public Incidente() {
@@ -65,13 +75,20 @@ public class Incidente {
         timerHilo2.start();
     }
 
-    public void resolverIncidente(){
+    public void resolverIncidente(String usuarioQueCerro){
         this.resuelto = true;
         this.timestampFin = new FechaHora(LocalDate.now(),LocalTime.now());
+        this.usuarioQueCerro = usuarioQueCerro;
     }
 
     public long horasDiferenciaEntreAperturaYCierre() {
-        Duration duracion = Duration.between(fechaHora.getHora(),timestampFin.getHora());
+        LocalDateTime fechaHoraInicio = fechaHora.getFecha().atTime(fechaHora.getHora());
+        LocalDateTime fechaHoraFin;
+        if(timestampFin!=null)
+            fechaHoraFin = timestampFin.getFecha().atTime(timestampFin.getHora());
+        else
+            fechaHoraFin = LocalDateTime.now();
+        Duration duracion = Duration.between(fechaHoraInicio,fechaHoraFin);
         return duracion.toHours();
     }
     public Boolean resuelto(){

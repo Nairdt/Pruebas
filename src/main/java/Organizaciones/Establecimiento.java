@@ -29,7 +29,7 @@ public class Establecimiento {
     @Getter
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "localizacion_id", referencedColumnName = "id_localizacion")
-    private Localizacion localizacion;//TODO Mergear localizador
+    private Localizacion localizacion;
     @Column(name = "nombre")
     String nombre;
     @OneToMany(cascade = CascadeType.ALL)

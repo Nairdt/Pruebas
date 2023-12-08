@@ -1,5 +1,6 @@
 package client.models.repositories;
 
+import Comunidad.Miembro;
 import Comunidad.Usuario;
 import Servicios.Servicio;
 import Organizaciones.Entidad;
@@ -17,6 +18,11 @@ public class RepositorioDeUsuarios extends EntityManagerHelper implements ICrudR
 
     public Object buscarPorId(int id) {
         String query = "from " + Usuario.class.getName() + " where id_usuario = " + id;
+        return entityManager().createQuery(query).getSingleResult();
+    }
+
+    public Object buscarMiembroPorIdUsuarioYComunidad(int id, int idComunidad) {
+        String query = "from " + Miembro.class.getName() + " where id_usuario = " + id + " and comunidad = "+ idComunidad;
         return entityManager().createQuery(query).getSingleResult();
     }
 

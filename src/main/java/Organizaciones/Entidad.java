@@ -20,7 +20,7 @@ public class Entidad {
     String nombre;
     @OneToMany(mappedBy = "entidad", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     List<Establecimiento> establecimientos;
-    @Transient
+    @OneToMany(mappedBy = "entidad", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Set<Incidente> incidentes;
     @ManyToOne
     @JoinColumn(name = "id_organismo",referencedColumnName = "id_organismo")
@@ -65,24 +65,16 @@ public class Entidad {
                 .count();
     }
 
-    public void addIncidente(Incidente incidente) {
+    public int getCantidadIncidentes() {
+        return incidentes.size();
+    }
+    public int getSumatoriaCierreIncidentes() {
+        return (int) incidentes.stream()
+                .mapToLong(incidente->incidente.horasDiferenciaEntreAperturaYCierre())
+                .sum();
+    }
+
+    public void  addIncidente(Incidente incidente) {
         incidentes.add(incidente);
     }
-    //TODO Lo dejamos como sugerencia, todavia no sabemos NoBorrar fondo como esta implementado el metodo
-    /*
-    public List<Centroide> espaciosEnActividad(){
-        List<Centroide> centroides = new ArrayList<Centroide>();
-
-        this.establecimientos.forEach(establecimiento -> {
-            centroides.add(establecimiento.getLocalizacion().getCentroide());
-        });
-
-        return centroides;
-    }
-    public void agregarEstablecimiento(Establecimiento... establecimientosAAgregar){
-        for (Establecimiento establecimiento : establecimientosAAgregar){
-            this.establecimientos.add(establecimiento);
-        }
-    }
-    */
 }

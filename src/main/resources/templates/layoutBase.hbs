@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html id="html" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <title>Menú</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
-    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
             crossorigin="anonymous"></script>
@@ -23,6 +23,7 @@
     <nav class="navbar navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Servicio Inclusivo</a>
+            <h2 style="color:white">{{nombre}} - {{rolUsuario}}</h2>
             <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -34,32 +35,35 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="/menu/{{id_usuario}}">Home</a>
+                            <a class="nav-link" aria-current="page" href="/menu">Home</a>
                         </li>
-                        {{#validarRolPrestador rolUsuario}}
+                        {{#unless (validarRolMiembro rolUsuario)}}
                             <li class="nav-item">
-                                <a class="nav-link" href="/entidades">Cargar datos de entidad/organismo</a>
+                                <a class="nav-link" href="/entidades">Listado de entidades</a>
                             </li>
-                        {{/validarRolPrestador}}
-                        {{#validarRolAdmin rolUsuario}}
+                        {{/unless}}
+                        {{#if (validarRolAdmin rolUsuario)}}
                             <li class="nav-item">
-                                <a class="nav-link active" href="/CargaMasivaEntidades">Carga masiva de entidades</a>
+                                <a class="nav-link" href="/CargaMasivaEntidades">Carga masiva de entidades</a>
                             </li>
-                        {{/validarRolAdmin}}
+                        {{/if}}
                         <li class="nav-item">
-                            <a class="nav-link active" href="/incidents/{{id_usuario}}">Incidentes</a>
+                            <a class="nav-link" href="/incidentes/">Incidentes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/rankingIncidentes">Ranking incidentes</a>
+                            <a class="nav-link" href="/incidentes/ranking/">Ranking incidentes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/comunidades">Ver comunidades</a>
+                            <a class="nav-link" href="/comunidades/">Ver comunidades</a>
                         </li>
-                        {{#validarRolAdmin rolUsuario}}
+                        {{#if (validarRolAdmin rolUsuario)}}
                             <li class="nav-item">
                                 <a class="nav-link" href="/usuarios">Administrar usuarios</a>
                             </li>
-                        {{/validarRolAdmin}}
+                        {{/if}}
+                        <li class="nav-item">
+                              <a class="nav-link" href="/usuarios/{{idUsuario}}">Mi usuario</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#" onclick="cerrarSesion()">Cerrar sesion</a>
                         </li>

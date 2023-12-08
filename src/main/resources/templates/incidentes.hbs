@@ -1,6 +1,6 @@
 {{#partial "contenido"}}
     <main
-        style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center; align-items: center;">
+        style="display: flex; flex-direction: column;  align-items: center;">
         <h1>INCIDENTES</h1>
         <h2>PENDIENTES</h2>
         <table id="customers" style="margin-bottom: 5rem; width: 80%;">
@@ -8,6 +8,7 @@
                 <th>Incidente</th>
                 <th>Servicio</th>
                 <th>Comunidad</th>
+                <th>Reportado por:</th>
                 <th>Abierto desde</th>
                 <th>Acciones</th>
             </tr>
@@ -16,10 +17,11 @@
                 <td>{{ this.observaciones }}</td>
                 <td>{{ this.servicioBase.establecimiento.nombre}} - {{ this.servicioBase.nombre  }}</td>
                 <td>{{ this.comunidad.nombre }}</td>
+                <td>{{ this.usuarioQueReporto }}</td>
                 <td>{{ this.fechaHora.fecha }} {{this.fechaHora.hora}}</td>
                 <td>
-                <form method="POST" action="/resolveincident/{{ this.id_incidente }}">
-                         <button type="submit" class="btn" style="background-color: rgba(210, 105, 30, 0.744); width: 100%;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <form method="POST" action="/incidentes/{{ this.id_incidente }}/resolver/{{ this.comunidad.id_comunidad }}">
+                         <button type="submit" class="btn" style="background-color: rgba(210, 105, 30, 0.744); width: 100%;">
                              Resolver incidente
                          </button>
                 </form>
@@ -46,8 +48,14 @@
                 <td>{{ this.observaciones }}</td>
                 <td>{{ this.servicioBase.establecimiento.nombre}} - {{ this.servicioBase.nombre  }}</td>
                 <td>{{  this.comunidad.nombre }}</td>
-                <td>{{  this.fechaHora.fecha }} {{this.fechaHora.hora}}</td>
-                <td>{{  this.timestampFin.fecha }} {{this.timestampFin.hora}}</td>
+                <td>{{  this.fechaHora.fecha }} {{this.fechaHora.hora}}
+                    <br>
+                    ({{ this.usuarioQueReporto }})
+                </td>
+                <td>{{  this.timestampFin.fecha }} {{this.timestampFin.hora}}
+                                    <br>
+                                    ({{ this.usuarioQueCerro }})
+                </td>
             </tr>
             {{/each}}
         </table>
@@ -59,7 +67,7 @@
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <form method="POST" action="/newincident">
+                    <form method="POST" action="/incidentes/">
                     <div class="modal-header" style="background-color: black; color: white;">
                         <h1 class="modal-title fs-5" id="staticBackdropLabel">Nuevo incidente</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
@@ -69,9 +77,15 @@
                                 <label for="inputIncidente" class="form-label">Descripcion incidente</label>
                                 <input name="descripcion" type="text" class="form-control" id="inputIncidente">
                             </div>
+                            <select name="comunidad" class="form-select" aria-label="Default select example" id="select">
+                                <option>Elegir comunidad</option>
+                                 {{#each comunidades}}
+                                    <option value="{{ this.id_comunidad }}">{{this.nombre}}</option>
+                                 {{/each}}
+                            </select>
                             <div class="mb-3" id="servicios">
                                 <div id="servicio1" style="border-top: 2px solid black; margin-top: 1rem;">
-                                    <label for="exampleInputRol" class="form-label" style="border: 1px solid black; border-radius: 1rem; margin-top: 1rem; background-color: black; color: white;">Servicio 1 afectado</label>
+                                    <label for="exampleInputRol" class="form-label" style="border: 1px solid black; border-radius: 1rem; margin-top: 1rem; background-color: black; color: white;">Servicio afectado</label>
                                     <select name="servicio" class="form-select" aria-label="Default select example" id="select1">
                                         <option>Elegir servicio</option>
                                     {{#each servicios}}
@@ -81,9 +95,6 @@
 
                                 </div>
                             </div>
-                            <h6 style="margin-top: 2rem;">¿Mas servicios afectados?</h6>
-                            <button id="btnOtroServicio" type="button" class="btn btn-success">Otro servicio</button>
-                            <!--Podes ir agregando servicios a medida que apretas ese boton-->
                     </div>
                     <div class="modal-footer" style="background-color: black;">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Volver</button>
@@ -133,4 +144,4 @@
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
         crossorigin="anonymous"></script>
 {{/partial}}
-{{>templates/layoutBase rolUsuario=RolUsuario}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=id_usuario}}

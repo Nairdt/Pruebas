@@ -1,5 +1,5 @@
 {{#partial "contenido"}}
-    <main style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center;">
+    <main style="display: flex; flex-direction: column;" class="imgEstablecimiento">
         <h1>DATOS ENTIDADES</h1>
         <div class="accordion" id="accordionPanelsStayOpenExample">
             {{#each entidades as |entidad|}}
@@ -10,7 +10,7 @@
                         </button>
                     </h2>
                     <div id="panelsStayOpen-collapse{{@index}}" class="accordion-collapse collapse">
-                            <div class="accordion-body" style="display: flex; flex-direction: column; justify-content: center;">
+                            <div class="accordion-body" style="display: flex; flex-direction: column; ">
                                 <h4>Establecimientos</h4>
                                 <table id="customers" style="margin-bottom: 5rem; width: 80%; align-self: center;">
                                     <tr>
@@ -21,7 +21,14 @@
                                 {{#each entidad.establecimientos as |establecimiento|}}
                                     <tr>
                                         <td>{{establecimiento.nombre}}</td>
-                                        <td>{{establecimiento.localizacion.departamento.nombre}}</td>
+                                        <td>
+                                                              <ul>
+                                                              <li>{{establecimiento.localizacion.nombreProvincia.nombre}}</li>
+                                                              <li>{{establecimiento.localizacion.nombreLocalidad.nombre}}</li>
+                                                              <li>{{establecimiento.localizacion.nombreMunicipio.nombre}}</li>
+                                                              <li>{{establecimiento.localizacion.nombreDepartamento.nombre}}</li>
+                                                              </ul>
+                                        </td>
                                         <td>
                                             <ul>
                                                 {{#each establecimiento.serviciosDisponibles as |servicioPorEstablecimiento|}}
@@ -42,4 +49,4 @@
             </div>
     </main>
 {{/partial}}
-{{>templates/layoutBase rolUsuario=RolUsuario}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=id_usuario}}

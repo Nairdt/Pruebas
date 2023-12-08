@@ -3,7 +3,7 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <h1 class="mb-4">Editar usuario</h1>
-                <form method="POST" action="/usuarios/{{usuario.id_usuario}}">
+                <form method="POST">
                     <div class="mb-3">
                         <label for="nombre" class="form-label">Nombre</label>
                         <input name="nombre" type="text" class="form-control" id="inputUsername" value="{{usuario.nombre}}">
@@ -13,15 +13,32 @@
                         <input name="email" type="email" class="form-control" id="inputMail" value="{{usuario.mail}}">
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Nueva contraseña</label>
-                        <input name="password" type="password" class="form-control" id="inputPassword" value="">
+                        <label for="telefono" class="form-label">Telefono</label>
+                        <input name="telefono" type="text" class="form-control" id="inputTelefono" value="{{usuario.telefono}}">
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Confirmar nueva contraseña</label>
-                        <input name="password" type="password" class="form-control" id="inputRepeatPassword" value="">
+                        <button class="btn btn-danger" id="btnCheckPassword">Cambiar contraseña</button>
+                    </div>
+                    <div id="inputsPasswords" style="display: none;">
+                        {{#if (validarRolMiembro rolUsuario)}}
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña actual</label>
+                            <input name="validarPassword" type="password" class="form-control" id="inputValidarPassword" value="">
+                        </div>
+                        {{/if}}
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Nueva contraseña</label>
+                            <input name="password" type="password" class="form-control" id="inputPassword" value="">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Confirmar nueva contraseña</label>
+                            <input name="confirmarPassword" type="password" class="form-control" id="inputRepeatPassword" value="">
+                        </div>
+                    </div>
+                    <div class="mb-4" id="msgError">
                     </div>
                     <div class="d-flex justify-content-between">
-                        <a href="/usuarios/" class="btn btn-danger">Volver</a>
+                        <a href="" id="btnVolver"class="btn btn-dark">Volver</a>
                         <button id="guardarUsuario" class="btn btn-primary">Confirmar cambios</button>
                     </div>
                 </form>
@@ -31,18 +48,79 @@
 
     <footer></footer>
     <script>
+        {{#unless (validarRolAdmin rolUsuario)}}
+            const urlRedireccion = "/menu/";
+        {{else}}
+            const urlRedireccion = "/usuarios/";
+        {{/unless}}
+
+        const urlEditarUsuario = "/usuarios/{{usuario.id_usuario}}";
+
+        var checkCambiaPassword= "false";
+
         $(document).ready(function () {
-            $('#guardarUsuario').on('click', () => {
-                $("form").submit();
+
+            $('#btnVolver').attr("href",urlRedireccion);
+
+            $('#btnCheckPassword').on("click", (e)=> {
+               if(checkCambiaPassword==="true") {
+                   checkCambiaPassword = "false";
+                   $('#btnCheckPassword').removeClass("btn-success");
+                   $('#btnCheckPassword').addClass("btn-danger");
+                   $("#inputsPasswords").hide();
+               }
+               else if(checkCambiaPassword==="false") {
+                   checkCambiaPassword = "true";
+                   $('#btnCheckPassword').removeClass("btn-danger");
+                   $('#btnCheckPassword').addClass("btn-success");
+                   $("#inputsPasswords").show();
+                }
+               return false;
             });
 
-            $("form").on("submit", (e) => {
-                if($("#inputPassword").val() !== $("#inputRepeatPassword").val()
-                        || $("#inputUsername").val().length <= 0
-                        || $("#inputMail").val().length <= 0)
-                    e.preventDefault();
-            }) ;
+            $('#guardarUsuario').on('click', (e) => {
+                let valInputUsername = $("#inputUsername").val();
+                let valInputPassword = $("#inputPassword").val();
+                let valInputRepeatPassword = $("#inputRepeatPassword").val();
+                let valInputValidarPassword = $("#inputValidarPassword").val();
+                let valInputEmail = $("#inputMail").val();
+                let valinputTelefono = $("#inputTelefono").val();
+
+
+                if( valInputPassword !== valInputRepeatPassword
+                        || valInputUsername.length <= 0
+                        || valInputEmail.length <= 0)
+                    return false;
+
+
+                var formData = new FormData();
+                formData.append("nombre",valInputUsername);
+                formData.append("email",valInputEmail);
+                formData.append("telefono",valinputTelefono);
+                formData.append("cambiaPassword",checkCambiaPassword)
+                formData.append("password",valInputPassword);
+                formData.append("validarPassword",valInputValidarPassword == undefined ? "" : valInputValidarPassword);
+
+                $.ajax({
+                    type: "POST",
+                    url: urlEditarUsuario,
+                    data: formData,
+                    dataType:'text',
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if(data != undefined) {
+                            if(data=="OK") {
+                                window.location.href = urlRedireccion;
+                            }
+                            else
+                                $('#msgError').show().text(data);
+                        }
+                    }
+                });
+                return false;
+            });
         });
     </script>
 {{/partial}}
-{{>templates/layoutBase rolUsuario=RolUsuario}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=id_usuario}}

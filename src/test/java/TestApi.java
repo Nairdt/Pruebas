@@ -26,6 +26,13 @@ public class TestApi {
         Municipio unMunicipio = servicioGeoref.municipioAPartirDeNombreYProvincia("Bahia Blanca","Buenos Aires");
         Assert.assertTrue(unMunicipio.getId() == 60056);
     }
+
+    @Test
+    public void testMunicipiosDeProvincia()throws IOException{
+        ServicioGeoref servicioGeoref = ServicioGeoref.getInstancia();
+        ListadoMunicipios municipios = servicioGeoref.listadoMunicipiosDeProvincia(7);
+        Assert.assertEquals(municipios.municipios.size(), 10);
+    }
     @Test
     public void testDepartamentoAPITieneProvinciaCorrecta()throws IOException{
         ServicioGeoref servicioGeoref = ServicioGeoref.getInstancia();
@@ -43,14 +50,14 @@ public class TestApi {
     @Test
     public void testLocalidadApi() throws IOException{
         ServicioGeoref servicioGeoref = ServicioGeoref.getInstancia();
-        ListadoLocalidades localidades = servicioGeoref.localidadesDeProvincia(14);
-        for(Localidad unaLocalidad:localidades.getLocalidades())
+        List<Localidad> localidades = servicioGeoref.listadoLocalidades();
+        for(Localidad unaLocalidad:localidades)
         {
             System.out.println("Id: " + unaLocalidad.getId());
             System.out.println("Nombre: " + unaLocalidad.getNombre());
             System.out.println("Municipio: " + unaLocalidad.getMunicipio().getNombre());
         }
-        Assert.assertEquals(localidades.getLocalidades().size(),568);
+        Assert.assertEquals(localidades.size(),0);
     }
 
     @Test

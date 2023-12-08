@@ -1,5 +1,6 @@
 package client.controllers;
 
+import Comunidad.RolUsuario;
 import Organizaciones.Entidad;
 import client.models.ModelBase;
 import client.models.repositories.RepositorioDeEntidades;
@@ -11,16 +12,19 @@ import services.georef.entities.Provincia;
 
 import java.util.*;
 
-import static client.helpers.ControllerHelpers.getRolUsuarioFromSession;
+import static client.helpers.ControllerHelpers.*;
 
 public class EntidadController {
     public void listadoEntidades(Context context) {
-        ModelBase model = new ModelBase(getRolUsuarioFromSession(context));
-        Integer idUsuario = (Integer) context.req().getSession().getAttribute("idUsuario");
+        ModelBase model = new ModelBase(generarMapModelBase(context));
+        Integer idUsuario = getIdUsuarioFromSession(context);
+        RolUsuario rolUsuario = getRolUsuarioFromSession(context);
+        List entidades;
 
-        List<Entidad> entidades = new RepositorioDeEntidades().buscarEntidadesPrestador(idUsuario);
-        System.out.println(entidades.get(0).getEstablecimientos().size());
-
+        if(rolUsuario == RolUsuario.ADMINISTRADOR)
+            entidades = new RepositorioDeEntidades().buscarTodos();
+        else
+            entidades = new RepositorioDeEntidades().buscarEntidadesPrestador(idUsuario);
         model.put("entidades",entidades);
 
 
@@ -31,8 +35,7 @@ public class EntidadController {
         try {
             ServicioGeoref servicioGeoref = ServicioGeoref.getInstancia();
             List<Provincia> lista = servicioGeoref.listadoProvincias().provincias;
-            //System.out.println(servicioGeoref.listadoProvincias().provincias);
-            ModelBase model = new ModelBase(getRolUsuarioFromSession(context));
+            ModelBase model = new ModelBase(getRolUsuarioFromSession(context),getNombreFromSession(context), getIdUsuarioFromSession(context));
             int idEntidad = Integer.parseInt(context.pathParam("id_entidad"));
             Entidad entidad = (Entidad) new RepositorioDeEntidades().buscarPorId(idEntidad);
 

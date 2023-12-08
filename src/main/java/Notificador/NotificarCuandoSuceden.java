@@ -14,9 +14,9 @@ public class NotificarCuandoSuceden extends LapsoNotificable {
     @Transient
     private NotificacionIncidente notificacion;
     @Transient
-    private static final String ACCOUNT_SID = "ACf298ad92277c008e81907979f0ba6e33";
+    private static final String ACCOUNT_SID = System.getenv("ACCOUNT_SID");
     @Transient
-    private static final String AUTH_TOKEN = "8bb973a22252d70f4fa3a60daa36cda3";
+    private static final String AUTH_TOKEN = System.getenv("AUTH_TOKEN");
     @Transient
     private MedioNotificable medio;
 
@@ -31,7 +31,7 @@ public class NotificarCuandoSuceden extends LapsoNotificable {
 
 
     @Override
-    public void notificarPorLapso(String destinatario) throws SchedulerException, IOException {
+    public void notificarPorLapso(String destinatario) throws IOException {
         this.medio.notificarPorMedio(destinatario, armarMensaje());
     }
 

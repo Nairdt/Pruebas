@@ -75,7 +75,7 @@
     <dependency>
       <groupId>com.sendgrid</groupId>
       <artifactId>sendgrid-java</artifactId>
-      <version>4.4.1</version>
+      <version>4.8.0</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -95,11 +95,6 @@
       <groupId>io.github.flbulgarelli</groupId>
       <artifactId>jpa-extras</artifactId>
       <version>1.0.0-rc1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>5.6.15.Final</version>
     </dependency>
 
     <!-- drivers jdbc -->
@@ -154,7 +149,6 @@
       <version>42.2.14</version>
     </dependency>
   </dependencies>
-
 
   <build>
     <plugins>
@@ -250,6 +244,7 @@
         </configuration>
       </plugin>
       <plugin>
+        <!-- Build an executable JAR -->
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
           <descriptorRefs>
@@ -263,7 +258,6 @@
             <goals><goal>assembly</goal></goals>
           </execution>
         </executions>
-
       </plugin>
     </plugins>
   </build>

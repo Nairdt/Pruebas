@@ -16,11 +16,6 @@ import java.io.IOException;
 
 public class NotificarPorMail implements MedioNotificable{
     //TODO importar directamente desde un .config o txt
-    //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
-    //private static final String ACCOUNT_SID = "ACf298ad92277c008e81907979f0ba6e33";
-    //private static final String AUTH_TOKEN = "8bb973a22252d70f4fa3a60daa36cda3";
-    private static final String ACCOUNT_SID = null;
-    private static final String AUTH_TOKEN = null;
 
     public static void main(String[] args) throws IOException {
         NotificarPorMail prueba = new NotificarPorMail();
@@ -39,7 +34,7 @@ public class NotificarPorMail implements MedioNotificable{
 
         Mail mail = new Mail(from, subject, to, content);
 
-        SendGrid sg = new SendGrid("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");
+        SendGrid sg = new SendGrid(ConfigTwilio.KEY_SENDGRID);
         Request request = new Request();
 
         request.setMethod(Method.POST);

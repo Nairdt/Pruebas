@@ -1,11 +1,12 @@
 {{#partial "contenido"}}
 <main
-        style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center; align-items: center;">
-    <h1>COMUNIDADES ACTIVAS</h1>
+        style="display: flex; flex-direction: column;  align-items: center;">
+    <h1>COMUNIDADES ACTIVAS - UNIRSE</h1>
     <table id="customers" style="margin-bottom: 5rem; width: 80%; align-self: center; margin-top: 3rem;">
         <tr>
             <th>Nombre</th>
-            <th>Descripcion</th>
+            <th>Colaboracion</th>
+            <th>Problematica</th>
             <th>Cantidad miembros</th>
             <th></th>
         </tr>
@@ -13,23 +14,126 @@
         {{#each comunidades}}
             <tr>
                 <td>{{this.nombre}}</td>
+                <td>{{this.colaboracion}}</td>
                 <td>{{this.problematica}}</td>
                 <td>{{this.cantidadMiembros}}</td>
                 <td>
-                    <form method="POST" action="/comunidades/{{this.id_comunidad}}/unirse/{{id_usuario}}">
-                    <a class="btn btn-success" >Unirse</a>
-                    </form>
+
+                    <a><button type="submit" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUnirse" data-bs-comunidad="{{this.id_comunidad}}">Unirse</button></a>
                 </td>
             </tr>
         {{/each}}
     </table>
-</main>
 
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Nueva comunidad
+        </button>
+
+            <h1 style="margin-top:3rem">MIS COMUNIDADES</h1>
+            <table id="customers" style="margin-bottom: 5rem; width: 80%; align-self: center; margin-top: 3rem;">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Colaboracion</th>
+                    <th>Problematica</th>
+                    <th>Cantidad miembros</th>
+                    <th></th>
+                </tr>
+
+                {{#each misComunidades}}
+                    <tr>
+                        <td>{{this.nombre}}</td>
+                        <td>{{this.colaboracion}}</td>
+                        <td>{{this.problematica}}</td>
+                        <td>{{this.cantidadMiembros}}</td>
+                        <td>
+                            <form method="POST" action="/comunidades/{{this.id_comunidad}}/salir/{{id_usuario}}">
+                                <a><button type="submit" class="btn btn-danger" >Salir</button></a>
+                            </form>
+                        </td>
+                    </tr>
+                {{/each}}
+            </table>
+</main>
+<!-- Modal -->
+<div class="modal fade" id="modalUnirse" tabindex="-1" aria-labelledby="exampleModalLabelUnirse" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="formUnirse" method="POST" action="/comunidades/{{this.id_comunidad}}/unirse/{{id_usuario}}">
+            <div class="modal-content">
+
+                <div class="modal-header" style="background-color: black; color: white;">
+                    <h1 class="modal-title fs-5" id="exampleModalLabelUnirse">Unirse a comunidad</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
+                </div>
+                <div class="modal-body" style="background-color: cyan;">
+                    <h2>Notificaciones</h2>
+                    <br>
+                    <select name="lapso" class="form-select" aria-label="Default select example" id="select1">
+                        <option>Elegir lapso</option>
+                        <option value="CUANDO_SUCEDEN">CUANDO SUCEDEN</option>
+                        <option value="SIN_APUROS">SIN APUROS</option>
+                    </select>
+                    <br>
+                    <select name="medio" class="form-select" aria-label="Default select example" id="select2">
+                        <option>Elegir medio</option>
+                        <option value="WHATSAPP">WHATSAPP</option>
+                        <option value="EMAIL">EMAIL</option>
+                    </select>
+                    <br>
+                </div>
+                <div class="modal-footer" style="background-color: black;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button id="unirseComunidad" type="submit" class="btn btn-primary">Unirse</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" action="/comunidades/nueva/{{id_usuario}}">
+                <div class="modal-header" style="background-color: black; color: white;">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva comunidad</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
+                </div>
+                <div class="modal-body" style="background-color: cyan;">
+                    <label for="inputNombreComunidad" class="form-label">Nombre</label>
+                    <input maxlength="50" name="nombre_comunidad" type="text" class="form-control">
+
+                    <label for="inputColaboracionComunidad" class="form-label">Colaboracion</label>
+                    <input maxlength="50" name="colaboracion_comunidad" type="text" class="form-control">
+
+                    <label for="inputProblemComunidad" class="form-label">Problematica</label>
+                    <input maxlength="50" name="problematica_comunidad" value="" type="text" class="form-control">
+                </div>
+                <div class="modal-footer" style="background-color: black;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear comunidad</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <footer></footer>
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+    var myModal = new bootstrap.Modal(document.getElementById('modalUnirse'));
+    var formUnirse = document.getElementById('formUnirse');
+    var unirseComunidadBtn = document.getElementById('unirseComunidad');
+
+    // Manejar el evento show.bs.modal (cuando el modal se muestra)
+    myModal._element.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var comunidadId = button.getAttribute('data-bs-comunidad');
+
+        // Actualizar el atributo action del formulario con el id_comunidad
+        formUnirse.action = "/comunidades/" + comunidadId + "/unirse/{{id_usuario}}";
+    });
+});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
         crossorigin="anonymous"></script>
 {{/partial}}
-{{>templates/layoutBase rolUsuario=RolUsuario}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=id_usuario}}

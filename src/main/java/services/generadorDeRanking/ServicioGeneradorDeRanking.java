@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ServicioGeneradorDeRanking {
     private static ServicioGeneradorDeRanking instancia = null;
-    private static final String urlAPI = "http://localhost:8080";
+    private static final String urlAPI = "http://localhost:8082";
     private Retrofit retrofit;
 
     private ServicioGeneradorDeRanking() {

@@ -8,14 +8,19 @@ import javax.persistence.AttributeConverter;
 public class LapsoReceptorConverter implements AttributeConverter<LapsoReceptor, String> {
     @Override
     public String convertToDatabaseColumn(LapsoReceptor lapsoReceptor){
-        switch (lapsoReceptor){
-            case CUANDO_SUCEDEN:
-                return "CUANDO_SUCEDEN";
-            case SIN_APUROS:
-                return "SIN_APUROS";
-            default:
-                return "null";
+        if(lapsoReceptor!=null){
+            switch (lapsoReceptor){
+                case CUANDO_SUCEDEN:
+                    return "CUANDO_SUCEDEN";
+                case SIN_APUROS:
+                    return "SIN_APUROS";
+                default:
+                    return "null";
+            }
+        }else {
+            return "null";
         }
+
     }
     @Override
     public LapsoReceptor convertToEntityAttribute(String lapsoReceptor){

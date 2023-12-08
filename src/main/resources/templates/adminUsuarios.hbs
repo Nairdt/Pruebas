@@ -1,5 +1,5 @@
 {{#partial "contenido"}}
-<main style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center; align-items: center;">
+<main style="display: flex; margin-top: 3rem; flex-direction: column; align-items: center;">
     <h1>ADMINISTRACION DE USUARIOS</h1>
 <table id="customers" style="margin-bottom: 5rem; width: 80%; align-self: center; margin-top: 3rem;">
     <tr>
@@ -29,4 +29,4 @@
             integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
             crossorigin="anonymous"></script>
 {{/partial}}
-{{>templates/layoutBase rolUsuario=RolUsuario}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=idUsuario}}

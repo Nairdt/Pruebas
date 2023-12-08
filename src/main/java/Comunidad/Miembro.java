@@ -33,7 +33,7 @@ public class Miembro {
     private String apellido;
     @Column(name = "correo")
     private String correo;
-    @ManyToOne(cascade = CascadeType.ALL) //TODO Ver si es mejor que sea al reves, que el cascadetype sea desde Usuario
+    @ManyToOne //TODO Ver si es mejor que sea al reves, que el cascadetype sea desde Usuario
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;
     @Column(name = "telefono")
@@ -51,6 +51,8 @@ public class Miembro {
     @ManyToOne
     @JoinColumn(name = "comunidad", referencedColumnName = "id_comunidad")
     private Comunidad comunidad;
+    @Transient
+    private NotificarSinApuros notificador = null;
 
 
     public Miembro(String nombre, String apellido, String correo, Usuario usuario, String telefono, Comunidad unaComunidad){
@@ -64,22 +66,46 @@ public class Miembro {
         this.comunidad = unaComunidad;
     }
     //TODO ELIMINAR SERVICIOS COMPUESTOS
-    public void notificarIncidente(String descripcion, TipoNotificacion tipo, ServicioPorEstablecimiento servicio, ServicioCompuesto compuesto){
+    public void notificarIncidente(String descripcion, TipoNotificacion tipo, ServicioPorEstablecimiento servicio, ServicioCompuesto compuesto) throws IOException {
         FechaHora fechaHora = new FechaHora(LocalDate.now(), LocalTime.now());
         //TODO NO MEZCLAR USO CON CREACION
         NotificacionIncidente notificacionIncidente = new NotificacionIncidente(this, descripcion, tipo, fechaHora, servicio, compuesto);
 
-        this.comunidad.reportarIncidente(notificacionIncidente);
+        this.comunidad.reportarIncidente(notificacionIncidente, this.id_miembro);
     }
 
-    public void serNotificado(NotificacionIncidente notificacion) throws SchedulerException, IOException {
+    public void serNotificado(NotificacionIncidente notificacion) throws IOException {
         String destino = elegirDestinatario();
 
-        usuario.notificar(destino);
+        if(this.lapso == LapsoReceptor.CUANDO_SUCEDEN){
+            if(this.medio == MedioReceptor.EMAIL){
+                NotificarPorMail notificarPorMail = new NotificarPorMail();
+                notificarPorMail.notificarPorMedio(destino, notificacion.informeNotificacion());
+            }else {
+                NotificarPorWhatsapp notificarPorWhatsapp = new NotificarPorWhatsapp();
+                notificarPorWhatsapp.notificarPorMedio(destino, notificacion.informeNotificacion());
+            }
+        }
+        else {
+            if(notificador == null) notificador = new NotificarSinApuros();
+            else notificador.agregarNotificacion(notificacion);
+        }
+        //usuario.notificar(destino);
     }
 
     public Miembro() {
 
+    }
+    public Miembro(Usuario usuario, Comunidad comunidad, LapsoReceptor lapso, MedioReceptor medio) {
+        this.usuario = usuario;
+        this.comunidad = comunidad;
+        this.telefono = usuario.getTelefono();
+        this.correo = usuario.getMail();
+        this.nombre = usuario.getNombre();
+        this.apellido = null;
+        this.intereses = new ArrayList<>();
+        this.medio = medio;
+        this.lapso = lapso;
     }
 
     public void notificarCercania(List<Establecimiento> listaEstablecimiento) throws SchedulerException, IOException {

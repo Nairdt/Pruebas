@@ -8,14 +8,20 @@ import javax.persistence.AttributeConverter;
 public class MedioReceptorConverter implements AttributeConverter<MedioReceptor, String> {
     @Override
     public String convertToDatabaseColumn(MedioReceptor medioReceptor){
-        switch (medioReceptor){
-            case EMAIL:
-                return "EMAIL";
-            case WHATSAPP:
-                return "WHATSAPP";
-            default:
-                return "null";
+        if(medioReceptor != null){
+            switch (medioReceptor){
+                case EMAIL:
+                    return "EMAIL";
+                case WHATSAPP:
+                    return "WHATSAPP";
+                default:
+                    return "null";
+            }
         }
+        else{
+            return "null";
+        }
+
     }
     @Override
     public MedioReceptor convertToEntityAttribute(String medioReceptor){

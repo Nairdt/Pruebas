@@ -8,7 +8,6 @@ import client.models.entities.usuarios.Rol;
 import dbManager.RolUsuarioConverter;
 import lombok.Getter;
 import lombok.Setter;
-import org.quartz.SchedulerException;
 import services.georef.entities.Localizacion;
 
 import java.io.IOException;
@@ -39,12 +38,12 @@ public class Usuario {
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "lapso",referencedColumnName = "id_lapso_notificable")
     private LapsoNotificable lapso;
-    @OneToMany
-    @JoinColumn(name = "id_miembro")
-    private List<Miembro> membresias;
+    @OneToMany(mappedBy = "usuario",cascade = CascadeType.ALL)
+    private List<Miembro> membresias = new ArrayList<Miembro>();
     @Column(name = "mail")
     private String mail;
     //private List<Establecimiento> listaEstablecimientos;
+    @Column(name = "telefono")
     private String telefono;
 
     public Usuario(String nombre, String clave, Rol rol, MedioReceptor medio, LapsoReceptor enumLapso, Localizacion unaLocalizacion, String mail){
@@ -54,17 +53,21 @@ public class Usuario {
         this.localizacionInteres = unaLocalizacion;
         if(enumLapso != null) this.lapso = enumLapso.notificar();
         this.mail = mail;
+        this.membresias = new ArrayList<>();
     }
 
-    public Usuario(String nombre, String clave, String mail, Rol rol){
+    public Usuario(String nombre, String clave, String mail, Rol rol, String telefono){
         this.nombre = nombre;
         this.clave = clave;
         this.rol = rol;
         this.mail = mail;
+        this.telefono = telefono;
+        this.membresias = new ArrayList<>();
+        this.lapso = null;
     }
 
     public Usuario() {
-
+        this.membresias = new ArrayList<>();
     }
 
 
@@ -107,9 +110,17 @@ public class Usuario {
         return establecimientos;
     }
 
-    public void notificar(String destino) throws SchedulerException, IOException {
+    public void notificar(String destino) throws IOException {
+        this.lapso = this.membresias.get(0).getLapso().notificar();
         this.lapso.notificarPorLapso(destino);
     }
 
+    public void agregarMembresia(Miembro miembro){
+        this.membresias.add(miembro);
+    }
 
+
+    public void removerMembresia(Miembro miembro) {
+        this.membresias.remove(miembro);
+    }
 }

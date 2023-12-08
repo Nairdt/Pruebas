@@ -13,5 +13,5 @@ public abstract class LapsoNotificable {
     @Column(name = "id_lapso_notificable")
     private int id_lapso_notificable;
 
-    public abstract void notificarPorLapso(String destinatario) throws SchedulerException, IOException;
+    public abstract void notificarPorLapso(String destinatario) throws IOException;
 }

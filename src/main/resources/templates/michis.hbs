@@ -1,10 +1,12 @@
 {{#partial "contenido"}}
     <main>
-        <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+        <div style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top:30rem">
             <h2 style="text-align: center">Si llegaste aca, es porque no esta disponible lo que buscabas o porque ocurrio un error.</h2>
             <h2 style="text-align: center">Te dejo un michi en longboard como compensacion por el imprevisto.</h2>
-            <img style="image-rendering: initial;" src="../img/NemoSkater.jpeg">
+            <img style="image-rendering: initial; width: 70%; height: 100%" src="../img/NemoSkater.jpeg">
+            <br>
+            <a href="/menu" class="btn btn-dark">Volver</a>
         </div>
     </main>
 {{/partial}}
-{{>templates/layoutBase rolUsuario=RolUsuario}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=id_usuario}}

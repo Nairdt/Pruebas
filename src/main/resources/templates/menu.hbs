@@ -1,8 +1,72 @@
 {{#partial "contenido"}}
-    <main style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center; align-items: center;">
-        <h1>MENU</h1>
+           <style>
+                   body {
+                       margin: 0;
+                       padding: 0;
+                       overflow: hidden;
+                   }
+
+                   .background-image {
+                       width: 100vw;
+                       height: 62vh;
+                       position: relative;
+                   }
+
+                   .background-image img {
+                       width: 100%;
+                       height: 100%;
+                       object-fit: cover;
+                   }
+
+                   .title-container {
+                       position: absolute;
+                       top: 70vh; /* ajusta la posición del título según la altura de la imagen */
+                       width: 100%;
+                       text-align: center;
+                       font-size: 2em;
+                       font-weight: bold;
+                       color: white;
+                       background: rgba(0, 0, 0, 0.5);
+                       padding: 20px;
+                       box-sizing: border-box;
+                   }
+
+                   .button-container {
+                       display: flex;
+                       justify-content: center;
+                       margin-top: 150px; /* aumenté el margen entre los botones */
+                   }
+
+                   .button-container a {
+                       margin: 0 175px; /* aumenté el margen lateral de los botones */
+                       padding: 30px 60px; /* aumenté el tamaño de los botones */
+                       font-size: 1.2em; /* aumenté el tamaño del texto de los botones */
+                       background-color: #000000; /* cambié el color de fondo a dorado */
+                       color: #FFF; /* cambié el color del texto a negro */
+                       text-decoration: none;
+                       border-radius: 20px; /* añadí bordes redondeados a los botones */
+                   }
+               </style>
+    <main style="display: flex; margin-top: 3rem; flex-direction: column; align-items: center;">
+
+                  <div class="background-image">
+                      <img src="../img/menuImg.jpg" alt="Tu Imagen">
+                  </div>
+
+                  <div class="title-container">
+                      <div class="title">
+                          Monitoreo de Estado de Servicios de Transporte Público y de Establecimientos
+                      </div>
+                  </div>
+
+
+              <div class="button-container">
+                  <a href="incidentes/" class="button-container">Ver incidentes</a>
+                  <a href="incidentes/ranking/" class="button-container">Ranking Incidentes</a>
+                  <a href="comunidades/" class="button-container">Ver comunidades</a>
+              </div>
     </main>
 
     <footer></footer>
 {{/partial}}
-{{>templates/layoutBase rolUsuario=RolUsuario}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=id_usuario}}

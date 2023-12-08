@@ -38,17 +38,8 @@ public class Rol {
         this.nombre = nombre;
         this.rolUsuario = rolUsuario;
     }
-    public Rol() {
-        this.funcionalidades = new HashSet<>();
-    }
-    public void agregarFuncionalidad(Funcionalidad ... funcionalidades) {
-        Collections.addAll(this.funcionalidades, funcionalidades);
-    }
-    public boolean poseeFuncionalidad(Funcionalidad funcionalidad) {
-        return this.funcionalidades.contains(funcionalidad);
-    }
 
-    public boolean poseeFuncionalidad(String nombreInterno) {
-        return this.funcionalidades.stream().anyMatch(p -> p.coincideConNombreInterno(nombreInterno));
+    public Rol() {
+
     }
 }

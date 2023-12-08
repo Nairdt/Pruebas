@@ -1,8 +1,8 @@
 {{#partial "contenido"}}
 <main
-        style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center; align-items: center;">
+        style="display: flex; margin-top: 3rem; flex-direction: column;  align-items: center;">
     <h1>Editar servicio</h1>
-    <form style="width: 30%;" method="POST" action="/servicios/editarServicio/{{Servicio.id_servicio_por_establecimiento}}">
+    <form method="POST" action="/servicios/{{Servicio.id_servicio_por_establecimiento}}/editar">
         <div class="mb-3">
             <label for="exampleInputName2" class="form-label">Nombre</label>
             <input name="nombre" type="text" class="form-control" id="exampleInputName2" value="{{Servicio.nombre}}">
@@ -19,10 +19,10 @@
     </form>
     <div style="display:flex;justify-content: center;">
         <div class="col-md-12">
-            <button id="guardarCambios" class="btn btn-primary">Confirmar cambios</button>
+            <a href="/establecimientos/{{Servicio.establecimiento.id_establecimiento}}"><button class="btn btn-dark">Volver</button></a>
         </div>
         <div class="col-md-12">
-            <a href="/establecimientos/{{Servicio.establecimiento.id_establecimiento}}"><button class="btn btn-dark">Volver</button></a>
+            <button id="guardarCambios" class="btn btn-primary">Confirmar cambios</button>
         </div>
     </div>
 </main>
@@ -53,4 +53,4 @@
     })
 </script>
 {{/partial}}
-{{>templates/layoutBase rolUsuario=RolUsuario}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=id_usuario}}

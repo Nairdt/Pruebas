@@ -1,5 +1,5 @@
 {{#partial "contenido"}}
-<main style="display: flex; margin-top: 3rem; flex-direction: column; justify-content: center; align-items: center;">
+<main style="display: flex; flex-direction: column;  align-items: center;">
     <h1>Editar establecimiento</h1>
     <form style="width: 77%;" method="POST" action="/establecimientos/{{Establecimiento.id_establecimiento}}">
         <div class="mb-3">
@@ -7,35 +7,25 @@
             <input name="nombre" type="text" class="form-control" id="exampleInputName2" value="{{Establecimiento.nombre}}">
         </div>
         <h2 style="border-bottom: 4px solid black; margin-top: 1rem;">Localización</h2>
-        <div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
-            <select class="form-select" aria-label="Default select example" id="1">
+        <div style="display: flex; flex-direction: row;  align-items: center;">
+            <select name="provincia" class="form-select" aria-label="Default select example" id="selectProvincia">
                 <option>Provincia</option>
-                <option id="p1" value="Buenos Aires">Buenos Aires</option>
-                <option id="p2" value="CABA">CABA</option>
+                                {{#each provincias}}
+                                    <option data-parametro="{{this.id}}" value="{{this.nombre}}">{{this.nombre}}</option>
+                                {{/each}}
             </select>
             <br>
-            <select class="form-select" aria-label="Default select example" id="2">
-                <option>Municipio</option>
-                <option id="m1" value="M1">M1</option>
-                <option id="m2" value="M2">M2</option>
-                <option id="m3" value="M3">M3</option>
-            </select>
-            <br>
-            <select class="form-select" aria-label="Default select example" id="3">
-                <option>Localidad</option>
-                <option id="l1" value="Lugano">Lugano</option>
-                <option id="l2" value="La Boca">La Boca</option>
-                <option id="l3" value="Belgrano">Belgrano</option>
-            </select>
-            <br>
-            <select class="form-select" aria-label="Default select example" id="4">
-                <option>Departamento</option>
-                <option id="d1" value="D1">D1</option>
-                <option id="d2" value="D2">D2</option>
-                <option id="d3" value="D3">D3</option>
-            </select>
+                            <select name="municipio" class="form-select" aria-label="Default select example" id="muns">
+                                <option>Municipio</option>
+                            </select>
+                            <br>
+                            <select name="departamento" class="form-select" aria-label="Default select example" id="deptos">
+                                <option>Departamento</option>
+                            </select>
         </div>
-    </form>
+            <button id="guardarEstablecimiento" class="btn btn-primary">Guardar establecimiento</button>
+            </form>
+
         <h2 style="border-bottom: 4px solid black; margin-top: 1rem;">Servicios</h2>
         <table id="customers" style="margin-bottom: 5rem; align-self: center; justify-self: center;">
             <tr>
@@ -50,7 +40,7 @@
                     <td>{{this.servicio.nombre}}</td>
                     <td>{{this.servicio.tipoServicio.nombre}}</td>
                     <td>
-                        <a href="/servicios/{{this.servicio.id_servicio}}">
+                        <a href="./{{Establecimiento.id_establecimiento}}/servicios/{{this.id_servicio_por_establecimiento}}">
                             <button class="btn btn-warning">
                                 Editar
                             </button>
@@ -85,9 +75,9 @@
                         <label for="select1" class="form-label">Tipo</label>
                         <select name="tipo_servicio" class="form-select" aria-label="Default select example" id="select1">
                             <option>Elegir tipo</option>
-                            <option id="1.1" value="Baño">Baño</option>
-                            <option id="1.2" value="Parada">Parada</option>
-                            <option id="1.3" value="Ascensor">Ascensor</option>
+                                {{#each tiposServicio}}
+                                    <option value="{{this.nombre}}">{{this.nombre}}</option>
+                                {{/each}}
                         </select>
                         <label for="inputProblemServicio1" class="form-label">Problematica</label>
                         <input name="problematica_servicio" value="" type="text" class="form-control" id="inputProblemServicio1">
@@ -101,12 +91,47 @@
         </div>
     </div>
 
-    <button id="guardarEstablecimiento" class="btn btn-primary">Guardar establecimiento</button>
+
     <a href="/entidades/{{Establecimiento.entidad.id_entidad}}">
             <button type="button" class="btn btn-dark">Volver</button>
     </a>
 </main>
 <footer></footer>
+<script>
+    document.getElementById("selectProvincia").addEventListener("change", function() {
+        var opcionSeleccionada = this.options[this.selectedIndex];
+        var parametro = opcionSeleccionada.getAttribute("data-parametro");
+
+        fetch('/entidades/establecimiento/nuevo/provincias/'+parametro, {
+            method: 'GET'
+        })
+
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(data => {
+            // Manipular la respuesta recibida desde el backend
+            data = "<option>Departamento</option>" + data;
+            let opciones = data.split("|");
+            document.getElementById('deptos').innerHTML = opciones[0];
+            let municipios = "<option>Municipio</option>";
+            municipios += opciones[1];
+            document.getElementById('muns').innerHTML = municipios;
+            if(opciones.length > 2){
+                        let localidad = "<option>Localidad</option>";
+                        localidad += opciones[2];
+                        document.getElementById('muns').innerHTML = localidad
+            }
+
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
+    });
+</script>
 <script>
     $(document).ready(() => {
 
@@ -145,4 +170,4 @@
     }
 </script>
 {{/partial}}
-{{>templates/layoutBase rolUsuario=RolUsuario}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=id_usuario}}

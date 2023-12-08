@@ -53,13 +53,14 @@ public class Comunidad {
         return miembros.size();
     }
 
-    public Comunidad(String colaboracion, String problematica){
-
+    public Comunidad(String nombre, String colaboracion, String problematica){
+            this.nombre = nombre;
             this.administradores = new ArrayList<Usuario>();
             this.colaboracion = colaboracion;
             this.miembros = new ArrayList<Miembro>();
             this.problematica = problematica;
             this.serviciosInteresados = new ArrayList<ServicioPorEstablecimiento>();
+            this.activa = false;
         }
     public void agregarMiembro(Miembro miembro){
         this.miembros.add(miembro);
@@ -82,21 +83,20 @@ public class Comunidad {
         return usuariosCercanos;
     }
 
-    public void reportarIncidente(NotificacionIncidente notificacion){
+    public void reportarIncidente(NotificacionIncidente notificacion, int id){
         this.miembros.forEach(miembro -> {
             try {
-                miembro.serNotificado(notificacion);
+                if(miembro.getId_miembro() != id) miembro.serNotificado(notificacion);
 
-            } catch (SchedulerException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
     }
-    public void agregarIncidente(String observaciones, ServicioPorEstablecimiento servicioPorEstablecimiento, ServicioCompuesto servicioCompuesto){
+    public void agregarIncidente(Incidente unIncidente,String observaciones, ServicioPorEstablecimiento servicioPorEstablecimiento, ServicioCompuesto servicioCompuesto){
         FechaHora fechaHora = new FechaHora(LocalDate.now(), LocalTime.now());
-        incidentes.add(new Incidente(this , observaciones,servicioPorEstablecimiento, servicioCompuesto, fechaHora, false));
+        incidentes.add(unIncidente);
+        //incidentes.add(new Incidente(this , observaciones,servicioPorEstablecimiento, servicioCompuesto, fechaHora, false));
     }
 
 
@@ -107,6 +107,11 @@ public class Comunidad {
             listadoString.concat("\n");
         }
         return listadoString;
+    }
+
+    public void eliminarMiembro(Miembro unMiembro){
+        this.miembros.remove(unMiembro);
+        unMiembro.setComunidad(null);
     }
 
 }

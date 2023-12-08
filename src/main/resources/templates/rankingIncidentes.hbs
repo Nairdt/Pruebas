@@ -1,15 +1,79 @@
 {{#partial "contenido"}}
-    <main style="display: flex; margin-top: 3rem; flex-direction: column; align-items: center; justify-content: center;">
+    <main style="display: flex; flex-direction: column; align-items: center; ">
         <h1>RANKING INCIDENTES</h1>
-
+        <!--
         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-        style="width: 50%; margin-top: 5rem;">Exportar ranking</button>
+                style="margin-top: 3rem;">Exportar ranking</button>
+                -->
+        <table id="customers" style="margin-bottom: 5rem; width: 80%; align-self: center; margin-top: 3rem;">
+            <tr>
+                <th>Nombre entidad</th>
+                <th>Puesto</th>
+            </tr>
+
+            {{#each entidades}}
+                <tr>
+                    <td>{{this.nombreEntidad}}</td>
+                    <td>{{this.puestoRanking}}</td>
+                </tr>
+            {{/each}}
+        </table>
+        <br>
+        <br>
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+
     </main>
 
     <footer></footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
-        crossorigin="anonymous"></script>
+            integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx = document.getElementById('myChart');
+
+
+
+        const data = {
+            labels: [
+                {{#each entidades}}
+                    "{{this.nombreEntidad}}",
+                {{/each}}
+            ],
+            datasets: [{
+                label: 'Nivel de impacto',
+                data: [
+                    {{#each entidades}}
+                        "{{ this.nivelImpacto }}",
+                    {{/each}}
+                ],
+                backgroundColor: [
+                    'rgb(255, 99, 132)',
+                    'rgb(24, 241, 0)',
+                    'rgb(255, 205, 86)',
+                    'rgb(201, 203, 207)',
+                    'rgb(241, 241, 0)',
+                    'rgb(0, 0, 0)',
+                    'rgb(217, 28, 198)',
+                    'rgb(28, 217, 208)',
+                    'rgb(241, 145, 0)',
+                    'rgb(0, 241, 92)'
+                ]
+            }]
+        };
+
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {}
+        }
+        new Chart(ctx, config);
+
+    </script>
 {{/partial}}
-{{>templates/base}}
+{{>templates/layoutBase rolUsuario=rolUsuario nombre=nombre idUsuario=id_usuario}}

@@ -34,16 +34,37 @@ public class ServicioGeoref implements Localizable {
         return responseProvinciasArg.body();
     }
 
-    public Municipio listadoMunicipiosDeProvincia(int idProvincia) throws IOException {
+    public ListadoDepartamentos listadoDepartamentos() throws IOException {
         GeorefService georefService = this.retrofit.create(GeorefService.class);
-        Call<ListadoMunicipios> requestMunicipiosDeProvincia = georefService.municipios(idProvincia, "id, nombre", 200);
+        Call<ListadoDepartamentos> requestDeptosArg = georefService.departamentos();
+        Response<ListadoDepartamentos> responseDeptosArg = requestDeptosArg.execute();
+        return responseDeptosArg.body();
+    }
+
+    public ListadoMunicipios listadoMunicipios() throws IOException {
+        GeorefService georefService = this.retrofit.create(GeorefService.class);
+        Call<ListadoMunicipios> requestMunicipiosArg = georefService.municipios();
+        Response<ListadoMunicipios> responseMunicipiosArg = requestMunicipiosArg.execute();
+        return responseMunicipiosArg.body();
+    }
+
+    public List<Localidad> listadoLocalidades() throws IOException {
+        GeorefService georefService = this.retrofit.create(GeorefService.class);
+        Call<ListadoLocalidades> requestLocalidades = georefService.localidades("Localidad simple");
+        Response<ListadoLocalidades> responseLocalidades = requestLocalidades.execute();
+        return responseLocalidades.body().getLocalidades();
+    }
+
+    public ListadoMunicipios listadoMunicipiosDeProvincia(int idProvincia) throws IOException {
+        GeorefService georefService = this.retrofit.create(GeorefService.class);
+        Call<ListadoMunicipios> requestMunicipiosDeProvincia = georefService.municipios(idProvincia, 100);
         Response<ListadoMunicipios> responseMunicipiosDeProvincia = requestMunicipiosDeProvincia.execute();
-        return responseMunicipiosDeProvincia.body().municipios.get(0);
+        return responseMunicipiosDeProvincia.body();
     }
 
     public ListadoLocalidades localidadesDeProvincia(int idProvincia) throws IOException{
         GeorefService georefService = this.retrofit.create(GeorefService.class);
-        Call<ListadoLocalidades> requestLocalidadesProv = georefService.localidades("centroide,departamento,id,municipio,nombre,provincia", idProvincia, 600);
+        Call<ListadoLocalidades> requestLocalidadesProv = georefService.localidades("id, nombre", idProvincia, 600);
         Response<ListadoLocalidades> responseLocalidades = requestLocalidadesProv.execute();
         return responseLocalidades.body();
     }

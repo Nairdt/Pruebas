@@ -1,6 +1,8 @@
+import Comunidad.Comunidad;
 import Comunidad.Incidente;
 import Comunidad.RolUsuario;
 import Comunidad.Usuario;
+import Comunidad.Miembro;
 import Notificador.FechaHora;
 import Organizaciones.Entidad;
 import Organizaciones.Establecimiento;
@@ -8,9 +10,7 @@ import Servicios.Servicio;
 import Servicios.ServicioPorEstablecimiento;
 import Servicios.TipoServicio;
 import client.models.entities.usuarios.Rol;
-import client.models.repositories.RepositorioDeEntidades;
-import client.models.repositories.RepositorioDeIncidentes;
-import client.models.repositories.RepositorioDeServicios;
+import client.models.repositories.*;
 import dbManager.EntityManagerHelper;
 import io.github.flbulgarelli.jpa.extras.test.SimplePersistenceTest;
 import org.junit.Assert;
@@ -86,7 +86,7 @@ public class ContextTest implements SimplePersistenceTest {
     @Test
     void resolverIncidente(){
         Incidente unIncidente = (Incidente) entityManager().createQuery("from "+ Incidente.class.getName() + " where resuelto = '" + 0 + "'").getResultList().get(0);
-        unIncidente.resolverIncidente();
+        unIncidente.resolverIncidente(null);
         persist(unIncidente);
         persist(unIncidente.getTimestampFin());
         commitTransaction();
@@ -151,6 +151,42 @@ public class ContextTest implements SimplePersistenceTest {
         persist(segundoEstablecimiento);
         persist(primerEstablecimiento);
         persist(unaEntidad);
+        commitTransaction();
+    }
+    @Test
+    void testComunidadAgregar(){
+        RepositorioDeComunidades repositorioDeComunidades = new RepositorioDeComunidades();
+        RepositorioDeUsuarios repositorioDeUsuarios = new RepositorioDeUsuarios();
+        Comunidad comunidad = (Comunidad) repositorioDeComunidades.buscarPorId(21);
+        Usuario usuario = (Usuario) repositorioDeUsuarios.buscarPorId(18);
+        //repositorioDeComunidades.entityManager().getTransaction().begin();
+        Miembro miembro = new Miembro(usuario, comunidad, null, null);
+        //miembro.setId_miembro(1);
+        usuario.agregarMembresia(miembro);
+        comunidad.getMiembros().add(miembro);
+        persist(usuario);
+        persist(comunidad);
+
+        //persist(miembro);
+
+
+
+
+        //persist(comunidad);
+
+
+
+
+        commitTransaction();
+    }
+    @Test
+    void tiposServicios(){
+        TipoServicio unTipo = new TipoServicio("Baños");
+        TipoServicio otroTipo = new TipoServicio("Paradas");
+        TipoServicio algunTipo = new TipoServicio("Ascensor");
+        persist(unTipo);
+        persist(otroTipo);
+        persist(algunTipo);
         commitTransaction();
     }
 

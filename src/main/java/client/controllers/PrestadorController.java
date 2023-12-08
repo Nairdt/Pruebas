@@ -19,7 +19,7 @@ import io.javalin.util.FileUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import static client.helpers.ControllerHelpers.getRolUsuarioFromSession;
+import static client.helpers.ControllerHelpers.*;
 
 public class PrestadorController {
 
@@ -29,7 +29,7 @@ public class PrestadorController {
     RepositorioDeUsuarios repositorioDeUsuarios = new RepositorioDeUsuarios();
 
     public void cargaMasivaEntidades(Context context) {
-        ModelBase model = new ModelBase(getRolUsuarioFromSession(context));
+        ModelBase model = new ModelBase(generarMapModelBase(context));
         context.render("/cargaMasivaEntidades.hbs", model.getModel());
     }
 
@@ -40,6 +40,8 @@ public class PrestadorController {
 
         // Your data, typically from a list or database
         List<String> csvData = List.of(
+                "TipoPrestador/NombrePrestador/EntidadesAsociadas/UsuarioAsociadoPrestador/PasswordPrestador\n"
+                +
                 "EntidadPrestadoraServicio,MiPrimerPrestador,MiPrimerEntidad,UsuarioAsociado,Clave123!\n"
                 +
                 "OrganismoDeControl,MiSegundoPrestador,MiSegundaEntidad|MiTerceraEntidad,OtroUsuario,Clave123!"

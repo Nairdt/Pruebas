@@ -1,16 +1,14 @@
 package client.models.repositories;
 
-import Comunidad.Incidente;
 import Servicios.Servicio;
 import Servicios.ServicioPorEstablecimiento;
 import Servicios.TipoServicio;
-import client.server.Server;
 import dbManager.EntityManagerHelper;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
 
 import java.util.List;
 
-public class RepositorioDeServicios  extends EntityManagerHelper implements ICrudRepository{
+public class RepositorioDeServicios extends EntityManagerHelper implements ICrudRepository{
     @Override
     public List buscarTodos() {
         return entityManager().createQuery("from " + Servicio.class.getName()).getResultList();

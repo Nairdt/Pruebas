@@ -20,11 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static client.helpers.ControllerHelpers.setearSesion;
-import static client.helpers.ControllerHelpers.getRolUsuarioFromSession;
+import static client.helpers.ControllerHelpers.*;
 
 public class UsuarioController extends EntityManagerHelper implements ICrudViewsHandler {
     RepositorioDeUsuarios repositorioDeUsuarios;
+    RepositorioDeRoles repositorioDeRoles;
+    
     Validador validadorPasswords;
 
     public UsuarioController(RepositorioDeUsuarios repositorioDeUsuarios){
@@ -33,12 +34,13 @@ public class UsuarioController extends EntityManagerHelper implements ICrudViews
         validadorPasswords.habilitarValidacion(new ValidacionMinuscula(), new ValidacionMayuscula(), new ValidacionNumeros());
     }
 
+
     public void mostrarLogin(Context context){
         context.render("login.hbs");
     }
 
     public void mostrarMenu(Context context) {
-        ModelBase model = new ModelBase(((Rol) context.sessionAttribute("rolUsuario")).getRolUsuario());
+        ModelBase model = new ModelBase(generarMapModelBase(context));
         context.render("menu.hbs",model.getModel());
     }
 
@@ -47,12 +49,9 @@ public class UsuarioController extends EntityManagerHelper implements ICrudViews
     public void login(Context context) {
         String email = context.formParam("email");
         String password = context.formParam("password");
-        Usuario usuario = new Usuario();
-        usuario = this.repositorioDeUsuarios.usuariosCompatibles(email,password);
+        Usuario usuario = usuario = repositorioDeUsuarios.usuariosCompatibles(email,password);
         if(usuario != null){
-            Usuario usuarioLogueado = usuario;
-            setearSesion(context,usuarioLogueado);
-
+            setearSesion(context,usuario);
             context.res().setStatus(200);
             context.json("OK");
         }
@@ -63,10 +62,7 @@ public class UsuarioController extends EntityManagerHelper implements ICrudViews
 
     public void validarPassword(Context context) {
         String txtPassword = context.body();
-        context.json(
-                validadorPasswords.listarValidaciones(txtPassword)
-        );
-
+        context.json(validadorPasswords.cumpleValidaciones(txtPassword));
     }
 
     public void cerrarSesion(Context context) {
@@ -79,59 +75,83 @@ public class UsuarioController extends EntityManagerHelper implements ICrudViews
     public void signup(Context context) {
         String nombre = context.formParam("nombre");
         String email = context.formParam("email");
+        String telefono = context.formParam("telefono");
         String password = context.formParam("password");
         String tipoUsuario = context.formParam("tipoUsuario").toUpperCase();
-        if(this.repositorioDeUsuarios.existeMail(email)){
-            context.html("<script>alert('ERROR, Usuario ya existe');window.location.href='/login';</script>");
+        if(repositorioDeUsuarios.existeMail(email)){
+            context.html("<script>alert('Ya existe un usuario con ese mail, usalo para iniciar sesión');window.location.href='/login';</script>");
         }else{
-            Rol rol = new RepositorioDeRoles().getRolSegunEnumRolUsuario(tipoUsuario);
-            Usuario unUsuario = new Usuario(nombre, password, email, rol);
-            entityManager().getTransaction().begin();
-            entityManager().persist(unUsuario);
-            entityManager().getTransaction().commit();
+            Rol rol = repositorioDeRoles.getRolSegunEnumRolUsuario(tipoUsuario);
+            Usuario unUsuario = new Usuario(nombre, password, email, rol, telefono);
+
+            repositorioDeUsuarios.guardar(unUsuario);
 
             setearSesion(context,unUsuario);
 
-            ModelBase model = new ModelBase(rol.getRolUsuario());
+            ModelBase model = new ModelBase(generarMapModelBase(context));;
             model.put("nombre", nombre);
-
             context.render("/menu.hbs", model.getModel());
         }
     }
 
     public void editarUsuario(Context context){
-        int idUsuario = Integer.parseInt(context.pathParam("id_usuario"));
-        this.repositorioDeUsuarios.entityManager().getTransaction().begin();
+        int idUsuario = getIdUsuarioFromSession(context);
+        String mensajesError = "OK";
 
-        String user = context.formParam("nombre");
-        String mail = context.formParam("email");
+        try {
+            int idUsuarioEdicion = Integer.parseInt(context.pathParam("id_usuario"));
+            String user = context.formParam("nombre");
+            String telefono = context.formParam("telefono");
+            String mail = context.formParam("email");
+            String clave = context.formParam("password");
+            String claveValidar = context.formParam("validarPassword");
+            Boolean cambiaClave = Boolean.getBoolean(context.formParam("cambiaPassword"));
 
-        String clave = context.formParam("clave");
+            Usuario usuario = (Usuario) this.repositorioDeUsuarios.buscarPorId(idUsuarioEdicion);
 
-        Usuario usuario = (Usuario) this.repositorioDeUsuarios.buscarPorId(idUsuario);
+            Boolean editaUserPropio = idUsuario == idUsuarioEdicion;
+            Boolean esAdmin = getRolUsuarioFromSession(context) == RolUsuario.ADMINISTRADOR;
 
-        if(user != null && !user.isEmpty())
-            usuario.setNombre(user);
-        if(clave != null && !clave.isEmpty())
-            usuario.setClave(context.formParam(clave));
+            if(editaUserPropio || esAdmin) {
 
-        this.repositorioDeUsuarios.entityManager().persist(usuario);
-        this.repositorioDeUsuarios.commit();
-        this.repositorioDeUsuarios.entityManager().clear();
-        context.redirect("/usuarios/");
+                if(cambiaClave)
+                    if(!esAdmin ||
+                      (!claveValidar.isEmpty() && editaUserPropio && !usuario.getClave().equals(claveValidar))
+                    )
+                        throw new Exception("La clave actual ingresada es incorrecta.");
+                if(user == null || user.isEmpty())
+                    throw new Exception("Falta completar el nombre de usuario.");
+                if(mail == null || mail.isEmpty())
+                    throw new Exception("Falta completar el mail del usuario.");
+                if(telefono == null || telefono.isEmpty())
+                    throw new Exception("Falta completar el telefono del usuario.");
+                if(cambiaClave && clave != null && !clave.isEmpty())
+                        usuario.setClave(clave);
+                usuario.setNombre(user);
+                usuario.setMail(mail);
+                usuario.setTelefono(telefono);
+
+                repositorioDeUsuarios.guardar(usuario);
+            }
+        }
+        catch (Exception e) {
+            mensajesError = e.getMessage();
+        }
+        context.res().setStatus(200);
+        context.json(mensajesError);
     }
 
     public void usuarios(Context context){
-        List<Usuario> usuarios = this.repositorioDeUsuarios.buscarTodos();
-        ModelBase model = new ModelBase(getRolUsuarioFromSession(context));
+        List<Usuario> usuarios = repositorioDeUsuarios.buscarTodos();
+        ModelBase model = new ModelBase(generarMapModelBase(context));
         model.put("usuarios", usuarios);
         context.render("adminUsuarios.hbs", model.getModel());
     }
 
     public void usuario(Context context){
         int id_usuario = Integer.parseInt(context.pathParam("id_usuario"));
-        Usuario usuario = (Usuario) this.repositorioDeUsuarios.buscarPorId(id_usuario);
-        ModelBase model = new ModelBase(getRolUsuarioFromSession(context));
+        Usuario usuario = (Usuario) repositorioDeUsuarios.buscarPorId(id_usuario);
+        ModelBase model = new ModelBase(generarMapModelBase(context));
         model.put("usuario", usuario);
         context.render("usuario.hbs", model.getModel());
     }
@@ -145,7 +165,7 @@ public class UsuarioController extends EntityManagerHelper implements ICrudViews
     @Override
     public void show(Context context) {
         Usuario usuario = (Usuario) this.repositorioDeUsuarios.buscar(Long.parseLong(context.pathParam("id")));
-        ModelBase model = new ModelBase(getRolUsuarioFromSession(context));
+        ModelBase model = new ModelBase(generarMapModelBase(context));
         model.put("usuario", usuario);
         context.render("Usuarios/Usuario.hbs", model.getModel());
     }
@@ -153,7 +173,7 @@ public class UsuarioController extends EntityManagerHelper implements ICrudViews
     @Override
     public void create(Context context) {
         Usuario usuario = null;
-        ModelBase model = new ModelBase(getRolUsuarioFromSession(context));
+        ModelBase model = new ModelBase(generarMapModelBase(context));
         model.put("Usuario", usuario);
         context.render("Usuarios/Usuario.hbs", model.getModel());
     }
@@ -170,7 +190,7 @@ public class UsuarioController extends EntityManagerHelper implements ICrudViews
     @Override
     public void edit(Context context) {
         Usuario usuario = (Usuario) this.repositorioDeUsuarios.buscar(Long.parseLong(context.pathParam("id")));
-        ModelBase model = new ModelBase(getRolUsuarioFromSession(context));
+        ModelBase model = new ModelBase(generarMapModelBase(context));
         model.put("Usuario", usuario);
         context.render("Usuarios/Usuario.hbs", model.getModel());
     }
@@ -198,12 +218,5 @@ public class UsuarioController extends EntityManagerHelper implements ICrudViews
 
         context.render("signup.hbs",model);
     }
-
-
-//    private void asignarParametros(Usuario Usuario, Context context) {
-//        if(!Object.equals(context.formParam("nombre"), "")) {
-//            Usuario.setNombre(context.formParam("nombre"));
-//        }
-//    }
 
 }

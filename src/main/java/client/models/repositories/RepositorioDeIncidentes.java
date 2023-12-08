@@ -1,5 +1,7 @@
 package client.models.repositories;
 
+import Comunidad.Comunidad;
+import Comunidad.Miembro;
 import Comunidad.Incidente;
 import dbManager.EntityManagerHelper;
 import io.github.flbulgarelli.jpa.extras.simple.WithSimplePersistenceUnit;
@@ -12,12 +14,12 @@ public class RepositorioDeIncidentes extends EntityManagerHelper implements ICru
     public List buscarTodos() {
         return entityManager().createQuery("from " + Incidente.class.getName()).getResultList();
     }
-    public List buscarIncidentesNoResueltos(){
-        return entityManager().createQuery("from "+ Incidente.class.getName() + " where resuelto = '" + 0 + "'").getResultList();
+    public List buscarIncidentesNoResueltos(int idUsuario){
+        return entityManager().createQuery("from "+ Incidente.class.getName() + " where resuelto = '" + 0 + "' AND id_comunidad IN (SELECT comunidad FROM "+ Miembro.class.getName()+" WHERE id_usuario = "+ idUsuario +")").getResultList();
     }
 
-    public List buscarIncidentesResueltos(){
-        return entityManager().createQuery("from "+ Incidente.class.getName() + " where resuelto = '" + 1 + "'").getResultList();
+    public List buscarIncidentesResueltos(int idUsuario){
+        return entityManager().createQuery("from "+ Incidente.class.getName() + " where resuelto = '" + 1 + "' AND id_comunidad IN (SELECT comunidad FROM "+ Miembro.class.getName()+" WHERE id_usuario = "+ idUsuario +")").getResultList();
     }
 
     @Override

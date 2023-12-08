@@ -12,9 +12,9 @@
 
 <body>
 <header></header>
-<main class="mainRegistroLogin">
+<main class="mainRegistroLogin fondoSignup">
     <div class="divCajaRegistro">
-        <div id="signup" style="flex-direction: column; justify-content: center; align-items: center;">
+        <div id="signup" class="mainRegistroLogin">
             <h1>REGISTRO</h1>
             <form method="POST" action="/signup">
                 <div class="mb-3 divInputRegistro">
@@ -24,6 +24,10 @@
                 <div class="mb-5 divInputRegistro">
                     <label for="inputEmail" class="form-label">Email</label>
                     <input name="email" type="email" class="form-control" id="inputEmail">
+                </div>
+                <div class="mb-5 divInputRegistro">
+                      <label for="inputTelefono" class="form-label">Teléfono</label>
+                      <input name="telefono" type="text" class="form-control" id="inputTelefono">
                 </div>
                 <div class="mb-3">
                     <label for="inputPassword" class="form-label text-left">Contraseña</label>
@@ -46,6 +50,8 @@
                 </div>
                 <div class="mb-3">
                     <button type="submit" id="btnRegistro" class="btn btn-primary disabled">Registrarse</button>
+                    <h4 class="preguntaLogin">¿Ya tenés cuenta?</h4>
+                    <a href="/login">Iniciar sesión</a>
                 </div>
             </form>
         </div>

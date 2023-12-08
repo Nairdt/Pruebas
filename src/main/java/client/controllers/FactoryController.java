@@ -1,5 +1,6 @@
 package client.controllers;
 
+import client.models.repositories.RepositorioDeEntidades;
 import client.models.repositories.RepositorioDeIncidentes;
 import client.models.repositories.RepositorioDeUsuarios;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +11,7 @@ public class FactoryController {
         switch (nombre) {
             case "Usuarios": controller = new UsuarioController(new RepositorioDeUsuarios()); break;
             case "Incidentes": controller = new IncidenteController(new RepositorioDeIncidentes()); break;
+            case "Ranking": controller = new RankingController(new RepositorioDeEntidades()); break;
             case "Entidad":  controller = new EntidadController(); break;
             case "Prestador":  controller = new PrestadorController(); break;
             case "Establecimiento":  controller = new EstablecimientoController(); break;

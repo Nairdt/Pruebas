@@ -30,7 +30,6 @@ public class Server {
             initTemplateEngine();
             Router.init();
         }
-            //Inicializador.init();
     }
 
     private static Consumer<JavalinConfig> config() {
@@ -53,6 +52,7 @@ public class Server {
                     Handlebars handlebars = new Handlebars();
                     handlebars.registerHelper("validarRolAdmin", HandlebarsHelpers.esAdministradorHandlebars);
                     handlebars.registerHelper("validarRolPrestador", HandlebarsHelpers.esPrestadorHandlebars);
+                    handlebars.registerHelper("validarRolMiembro", HandlebarsHelpers.esMiembroHandlebars);
                     Template template = null;
                     try {
                         template = handlebars.compile(

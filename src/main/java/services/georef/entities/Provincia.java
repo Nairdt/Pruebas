@@ -1,11 +1,12 @@
 package services.georef.entities;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
-
+@Setter
 public class Provincia{
     @Column(name = "id_provincia")
     protected int id;

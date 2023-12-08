@@ -17,19 +17,25 @@ public class RepositorioDeEntidades extends EntityManagerHelper implements ICrud
 
     public List buscarEntidadesPrestador(Integer idUsuario){
 
-        OrganismoDeControl organismoDeControlPorUsuario = (OrganismoDeControl) entityManager().createQuery("FROM " + OrganismoDeControl.class.getName() + " WHERE id_usuario = " + idUsuario)
-                .getResultStream()
-                .findFirst()
-                .orElse(null);
+        OrganismoDeControl organismoDeControlPorUsuario = (OrganismoDeControl) entityManager().createQuery("FROM " + OrganismoDeControl.class.getName()
+                        + " WHERE id_usuario = "
+                        + idUsuario)
+                .getSingleResult();
         if(organismoDeControlPorUsuario != null) {
-            return entityManager().createQuery("FROM " + Entidad.class.getName() + " WHERE id_organismo = " + organismoDeControlPorUsuario.getId_organismo()).getResultList();
+            return entityManager().createQuery("FROM " + Entidad.class.getName()
+                    + " WHERE id_organismo = "
+                    + organismoDeControlPorUsuario.getId_organismo()
+            ).getResultList();
         }
-        EntidadPrestadoraServicio entidadPrestadoraServicioPorUsuario = (EntidadPrestadoraServicio) entityManager().createQuery("FROM " + EntidadPrestadoraServicio.class.getName() + " WHERE id_usuario = " + idUsuario)
-                .getResultStream()
-                .findFirst()
-                .orElse(null);
+        EntidadPrestadoraServicio entidadPrestadoraServicioPorUsuario = (EntidadPrestadoraServicio) entityManager().createQuery("FROM " + EntidadPrestadoraServicio.class.getName()
+                        + " WHERE id_usuario = "
+                        + idUsuario)
+                .getSingleResult();
         if(entidadPrestadoraServicioPorUsuario != null)
-            return entityManager().createQuery("FROM " + Entidad.class.getName() + " WHERE id_prestadora = " + entidadPrestadoraServicioPorUsuario.getId_prestadora()).getResultList();
+            return entityManager().createQuery("FROM " + Entidad.class.getName()
+                    + " WHERE id_prestadora = "
+                    + entidadPrestadoraServicioPorUsuario.getId_prestadora()
+            ).getResultList();
         else return null;
     }
     @Override
